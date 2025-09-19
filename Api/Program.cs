@@ -1,28 +1,48 @@
 using Api.Configuration;
+using Api.Middlewares;
+using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// Controllerlarni ishlashi uchun kerak
+builder.Services.AddControllers();
+
+// Api dokumentatsiyasi uchun kerak
+builder.Services.AddEndpointsApiExplorer();
+
+// Loyihaga oid servislarni ulash
 builder.Services.AddDbContext(builder.Configuration);
 builder.Services.AddProjectServices(builder.Configuration);
 
 var app = builder.Build();
+// Ma'lumotlar bazasini migratsiya qilish
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    //await dataContext.Database.EnsureDeletedAsync();
+    await dataContext.Database.MigrateAsync();
+}
+// Exception handler middleware
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
-// Configure the HTTP request pipeline.
+// Swagger faqat Developmentda ochiladi
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
+app.UseStaticFiles();
+app.UseDefaultFiles();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+// Controllerlarni ulash
+app.MapControllers();   // <<<--- MUHIM
 
 app.Run();
