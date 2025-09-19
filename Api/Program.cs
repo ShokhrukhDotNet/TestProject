@@ -17,13 +17,14 @@ builder.Services.AddDbContext(builder.Configuration);
 builder.Services.AddProjectServices(builder.Configuration);
 
 var app = builder.Build();
+
 // Ma'lumotlar bazasini migratsiya qilish
 using (var scope = app.Services.CreateScope())
 {
     var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-    //await dataContext.Database.EnsureDeletedAsync();
     await dataContext.Database.MigrateAsync();
 }
+
 // Exception handler middleware
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
