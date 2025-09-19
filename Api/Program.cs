@@ -4,13 +4,13 @@ using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddOpenApi();
 
 // Controllerlarni ishlashi uchun kerak
 builder.Services.AddControllers();
 
 // Api dokumentatsiyasi uchun kerak
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Loyihaga oid servislarni ulash
 builder.Services.AddDbContext(builder.Configuration);
@@ -30,7 +30,6 @@ app.UseMiddleware<ExceptionHandlerMiddleware>();
 // Swagger faqat Developmentda ochiladi
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
