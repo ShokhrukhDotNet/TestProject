@@ -21,7 +21,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6            # Собираем и пушим образ
         with:
-          file: TestProject/Dockerfile
+          file: Dockerfile
           context: .                                 # Контекст сборки (корень репо)
           push: true                                 # Публиковать в реестр
           tags: |                                    # Теги образа
