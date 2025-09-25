@@ -1,32 +1,42 @@
+version: '3'
+
 services:
   api:
-    image: shohruh55/testproject-api
-    container_name: testproject_api
-    build:
-      context: .
-      dockerfile: Api/Dockerfile
+    build: .
     ports:
       - "7101:8080"
       - "7102:8081"
+    container_name: 'testproject-service'
+    restart: unless-stopped
+    tty: true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080;http://+:8081
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=TestProjectDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=TestProjectDb;User Id=sa;Password=Str0ng!Pass2025;TrustServerCertificate=True;
     depends_on:
       - mssql
-    restart: always
+    networks:
+      - testproject-network
 
   mssql:
-    container_name: testproject_mssql
     image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: 'testproject.db'
+    restart: unless-stopped
+    tty: true
     ports:
       - "1433:1433"
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=Your_password123
+      - SA_PASSWORD=Str0ng!Pass2025
     volumes:
-      - mssql_data:/var/opt/mssql
-    restart: always
+      - testproject-data:/var/opt/mssql
+    networks:
+      - testproject-network
+
+networks:
+  testproject-network:
+    driver: bridge
 
 volumes:
-  mssql_data:
+  testproject-data:
+    driver: local

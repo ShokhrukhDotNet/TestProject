@@ -1,0 +1,35 @@
+﻿name: .NET CI (Build only)                         # Имя workflow
+
+on:
+  push:                                            # Запускать при push
+    branches: [ "main" ]                           # Только в main
+  pull_request:                                    # И при PR
+    branches: [ "main" ]
+
+jobs:
+  build:                                           # Имя job'а
+    runs-on: ubuntu-latest                         # Агент: Ubuntu
+
+    steps:
+      - uses: actions/checkout@v4                    # Получаем код из репозитория
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4                # Устанавливаем .NET SDK
+        with:
+          dotnet-version: '9.0.x'                    # Версия SDK
+
+      - name: Restore
+        run: dotnet restore TestProject.sln                  # Восстанавливаем NuGet пакеты
+
+      - name: Build
+        run: dotnet build TestProject.sln --configuration Release --no-restore  # Сборка
+
+      - name: Publish Api
+        run: dotnet publish Api/Api.csproj -c Release -o out             # Паблишим API
+
+      - name: Upload artifact (Api)
+        uses: actions/upload-artifact@v4             # Загружаем артефакт в GitHub Actions
+        with:
+          name: testproject-api-publish                      # Имя артефакта
+          path: out/**                               # Что загружать
+          if-no-files-found: error                   # Если нет файлов → ошибка
