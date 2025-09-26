@@ -2,11 +2,11 @@ version: '3'
 
 services:
   api:
-    build: .
+    image: shohruh55/testproject-api:latest
     ports:
       - "7101:8080"
       - "7102:8081"
-    container_name: 'testproject-service'
+    container_name: testproject_api
     restart: unless-stopped
     tty: true
     environment:
@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "1433:1433"
+      - "1434:1433"
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Str0ng!Pass2025
