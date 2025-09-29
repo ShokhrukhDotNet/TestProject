@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   api:
     image: shohruh55/testproject-api:latest
