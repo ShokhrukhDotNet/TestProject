@@ -1,6 +1,8 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Repository.Users;
+using Service.EmailRequests;
 using Service.Users;
 
 namespace Api.Configuration;
@@ -22,6 +24,7 @@ public static class ServiceConfiguration
     {
         AddRepositories(services);
         AddServices(services);
+        services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
 
         return services;
     }
@@ -37,6 +40,7 @@ public static class ServiceConfiguration
     private static void AddServices(IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IEmailRequestService, EmailRequestService>();
     }
 
     private static void AddRepositories(IServiceCollection services)

@@ -33,4 +33,11 @@ public class UserRepository(DataContext context) : IUserRepository
         context.Users.Remove(user);
         await context.SaveChangesAsync();
     }
+
+    public async Task<List<User>> GetByIdsAsync(List<int> ids)
+    {
+        return await context.Users
+            .Where(u => ids.Contains(u.Id))
+            .ToListAsync();
+    }
 }
