@@ -7,6 +7,17 @@ namespace Api.Configuration;
 
 public static class ServiceConfiguration
 {
+    public static async Task<WebApplication> UseMigrationAsync(this WebApplication app)
+    {
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+            await db.Database.MigrateAsync();
+        }
+
+        return app;
+    }
+
     public static IServiceCollection AddProjectServices(this IServiceCollection services, IConfiguration configuration)
     {
         AddRepositories(services);
